@@ -6,8 +6,8 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(bodyParser.json());
-app.use(cors());
+app.use(express.json());
+app.use(cors()); 
 
 // Static Data
 // src/cardData.js
@@ -130,32 +130,33 @@ const bookings = [];
 // Routes
 app.get('/api/listings', (req, res) => {
     try {
-        res.status(200).json({listings});
+        res.status(200).json(listings);
     }
     catch (error) {
-        res.status(500).json({ error: "There is error while Fetching Data From Linstings" });
+        res.status(500).json("There is error while Fetching Data From Linstings");
     }
 });
 
 app.get('/api/listings/:id', (req, res) => {
     const listing = listings.find(l => l.id === parseInt(req.params.id));
-    if (!listing) return res.status(404).send('Listing not found');
-    res.status(200).json({listing});
+    if (!listing) return res.status(404).json('Listing not found');
+    res.status(200).json(listing);
 });
+
 
 app.get('/api/listings/search', (req, res) => {
     const query = req.query.query?.toLowerCase();
     const filtered = listings.filter(loc => loc.location.toLowerCase().includes(query));
-    res.status(200).json({filtered});
+    res.status(200).json(filtered);
 });
 
 app.post('/api/bookings', (req, res) => {
     const { listingId, checkIn, checkOut } = req.body;
     if (!listingId || !checkIn || !checkOut) {
-        return res.status(400).send('Missing booking details');
+        return res.status(400).json('Missing booking details');
     }
     bookings.push({ listingId, checkIn, checkOut });
-    res.json({ message: 'Booking created', booking: { listingId, checkIn, checkOut } });
+    res.json('Booking created');
 });
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
