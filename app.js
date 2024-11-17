@@ -150,13 +150,32 @@ app.get('/api/listings/search', (req, res) => {
     res.status(200).json(filtered);
 });
 
-app.post('/api/bookings', (req, res) => {
-    const { listingId, checkIn, checkOut } = req.body;
-    if (!listingId || !checkIn || !checkOut) {
-        return res.status(400).json('Missing booking details');
+
+
+app.post('/api/booking/:id', (req, res) => {
+    const { checkIn, checkOut } = req.body;
+    const { id } = req.params;  
+    console.log('Data Received');
+    if (!checkIn || !checkOut) {
+        return res.status(400).json({ message: 'Missing check-in or check-out dates' });
     }
-    bookings.push({ listingId, checkIn, checkOut });
-    res.json('Booking created');
+
+    if (new Date(checkIn) >= new Date(checkOut)) {
+        return res.status(400).json({ message: 'Check-in date must be earlier than check-out date' });
+    }
+
+    const newBooking = { listingId: id, checkIn, checkOut };
+    bookings.push(newBooking);  
+
+    res.status(200).json({ message: 'Booking created successfully', booking: newBooking });
 });
+
+
+app.get('/api/bookings', (req, res) => {
+    res.json(bookings);  
+});
+
+
+
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
