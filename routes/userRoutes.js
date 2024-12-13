@@ -6,10 +6,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    res.send("hello World");
-});
-
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -45,7 +41,7 @@ router.post('/login', async (req, res) => {
         if (!IsPasswordCorrect) {
             return res.status(400).send("Incorrect Password!!!");
         }
-        const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: "6h" });
         res.status(200).json({ user: existingUser, token });
 
     } catch (error) {
@@ -70,5 +66,7 @@ router.get('/me', async (req, res) => {
         res.status(500).send("Something went Wrong");
     }
 });
+
+
 
 export default router;
