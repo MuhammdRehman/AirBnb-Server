@@ -24,7 +24,7 @@ router.get('/listings',async(req,res)=>{
     }catch(error){
         res.status(500).json({error:"Something Went Wrong"});
     }
-})
+});
 
 
 router.post('/listings', upload.array('images', 10), async (req, res) => {
@@ -68,12 +68,11 @@ router.post('/listings', upload.array('images', 10), async (req, res) => {
 });
 router.delete('/listings/:id',async(req,res) =>{
     try {
-         const {id} = req.params.id;
-         const listing = await Listing.findById(id);
+         const {id} = req.params;
+         const listing = await Listing.findByIdAndDelete(id);
          if(!listing){
             res.status(404).json({error:"Listing Not Found"});
          }
-         await listing.remove();
          res.status(200).json({message:"Listing deleted successfully!"});
 
     } catch (error) {
@@ -82,24 +81,19 @@ router.delete('/listings/:id',async(req,res) =>{
 });
 router.get('/bookings', async (req, res) => {
     try {
-        // Fetch bookings and populate both the 'listing' and 'user' fields
         const bookings = await Booking.find()
-            .populate('listingId')  // Populate listing details
-            .populate('userId');    // Populate user details
+            .populate('listingId')  
+            .populate('userId');    
 
-        // Check if bookings exist
         if (!bookings || bookings.length === 0) {
             return res.status(404).json({ error: "No bookings found" });
         }
 
-        // Send the populated bookings data
         res.status(200).json(bookings);
     } catch (error) {
-        console.error('Error occurred while fetching bookings:', error); // Log the actual error
+        console.error('Error occurred while fetching bookings:', error);
         res.status(500).json({ error: 'An error occurred while fetching bookings.' });
     }
 });
-
-
 
 export default router;

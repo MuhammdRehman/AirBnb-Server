@@ -33,6 +33,29 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/bookings/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid ObjectId format' });
+        }
+
+        const bookings = await Booking.find({ userId: id }).populate('listingId');
+        console.log(bookings); 
+
+        if (bookings.length === 0) {
+            return res.status(404).json({ error: 'No bookings found for this user.' });
+        }
+
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Something went wrong while fetching bookings.' });
+    }
+});
+
+
 
 router.post('/bookings/:id', async (req, res) => {
     const { checkIn, checkOut, userId } = req.body; 
@@ -79,52 +102,5 @@ router.post('/bookings/:id', async (req, res) => {
     }
 });
 
-
-
-
-// router.get('/', async (req, res) => {
-//     try {
-
-//         const page = parseInt(req.query.page) || null;
-//         const limit = parseInt(req.query.limit) || null;
-        
-//         // Pagination
-//         if (!page || !limit) {
-//             const listigs = await listings.find();
-//             res.json({ listings });
-//         }
-//         const skip = (page - 1) * limit;
-
-//         const listings = await Listing.find()
-//             .skip(skip)        
-//             .limit(limit);      
-
-//         res.json({
-//             listings
-//         });
-
-//         const filter = {};
-//         if (req.query.price) {
-//             if(req.query.price && isNaN(req.query.price)){
-//                 res.status(500).json({ error: 'Price Must be Numeric Value' });   
-//             }
-//             filter.price = { $lte: req.query.price };  
-//         }
-//         if (req.query.property_type) {
-//             filter.property_type = req.query.property_type;
-//         }
-//         if (req.query.bedrooms) {
-//             if(req.query.bedrooms && isNaN(req.query.bedrooms)){
-//                 res.status(500).json({ error: 'Bedrooms Must be Numeric' });   
-//             }
-//             filter.bedrooms = parseInt(req.query.bedrooms);
-//         }
-
-
-//     } catch (error) {
-//         console.error("Error fetching listings:", error);
-//         res.status(500).json({ error: 'An error occurred while fetching listings' });
-//     }
-// });
 
 export default router;
