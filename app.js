@@ -5,6 +5,7 @@ import  dotenv  from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import hostRoutes from './routes/hostRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -33,4 +34,5 @@ connection.on("disconnect",()=>{
 app.use('/api/auth',userRoutes);
 app.use('/api/listings',listingRoutes);
 app.use('/api/admin',adminRoutes);
+app.use('/api/host',hostRoutes);    
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

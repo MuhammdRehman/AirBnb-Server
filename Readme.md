@@ -26,8 +26,8 @@ Follow the steps below to set up and run the backend locally:
 
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/MuhammdRehman/AirBnb-Backend.git
-   cd AirBnb-Backend
+   git clone https://github.com/MuhammdRehman/AirBnb-Server.git
+   cd AirBnb-Server
 
 ## Install Dependencies
 ```bash
@@ -49,6 +49,6 @@ Follow the steps below to set up and run the backend locally:
 
 ## Contact
 For any queries or suggestions, feel free to contact:
-- **Muhammad Rehman**
+- **<a href="ammuhammadrehman@gmail.com"> Muhammad Rehman</a>**
 - GitHub: [MuhammdRehman](https://github.com/MuhammdRehman)
 

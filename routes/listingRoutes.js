@@ -3,7 +3,9 @@ import Listing from '../models/Listing.js';
 import Booking from '../models/Bookings.js';
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import { verifyToken } from '../middlewares/authMiddleware.js';
 const router = express.Router();
+
 
 
 router.get('/', async (req, res) => {
@@ -32,7 +34,7 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching the listing' });
     }
 });
-
+router.use(verifyToken);
 router.get('/bookings/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -79,12 +81,16 @@ router.post('/bookings/:id', async (req, res) => {
         if (new Date(checkIn) >= new Date(checkOut)) {
             return res.status(400).json({ message: 'Check-in date must be earlier than Check-out date' });
         }
+        const datediff = new Date(checkOut) - new Date(checkIn);
+        const days = datediff / (1000 * 3600 * 24);
+        const amount = days * listing.price;
 
         const newBooking = new Booking({
             listingId: new mongoose.Types.ObjectId(listingId),
             userId: new mongoose.Types.ObjectId(userId),
             checkIn,
-            checkOut
+            checkOut,
+            price: amount
         });
 
         await newBooking.save();

@@ -8,15 +8,19 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password,role } = req.body;
         const existingUser = await User.findOne({ username, });
         if (existingUser) {
             return res.status(400).send("User Already Exist");
+        }
+        if (role && !['admin','host', 'guest'].includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
         }
         const hashPassword = await bcrpt.hash(password, 12);
         const user = new User({
             username,
             password: hashPassword,
+            role,
         });
         console.log("User is going to save");
         await user.save();
@@ -24,18 +28,23 @@ router.post('/register', async (req, res) => {
         res.status(201).json(user);
 
     } catch (error) {
-        res.status(500).json({ error: "Unexpected error occurs" });
+        res.status(500).json("Something Went Wrong while Creating user...");
     }
 });
 
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password ,role} = req.body;
         const existingUser = await User.findOne({ username, });
         if (!existingUser) {
             return res.status(400).send("User Does Not Exist");
         }
-
+        if (role && !['admin','host', 'guest'].includes(role)) {
+            return res.status(400).send("Role not provided");
+        }
+        if(existingUser.role !== role){
+            return res.status(400).send("Invalid Username");
+        }
         const IsPasswordCorrect = await bcrpt.compare(password, existingUser.password);
         console.log(IsPasswordCorrect);
         if (!IsPasswordCorrect) {
